@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 from pathlib import Path
+import decimal
 
 #otvori subor
 filename=input('Enter filename ')
@@ -35,10 +36,14 @@ for l in rawfile:
 		napatie = tofloat(split[0])
 		#premeni hodnoty v druhom stlpci na float a nazve ich deformacia
 		deformacia = tofloat(split[1])
-		podiel = napatie/deformacia
 		#pripise hodnoty napatia a deformacie do listu points
-		points.append([podiel])
+		points.append(napatie/deformacia)
+		
 
+		
+for x in points:
+	print((x+1)/x)
+	
 ##########################################
 #def remove_negs(linearita):
 #	for item in linearita:
