@@ -44,6 +44,22 @@ for x in points:
 		vydelene.append((x+1)/x)
 print(vydelene)
 
+#for u in vydelene:
+#	print (abs((u)-(u+1))/u)
+
+for row in vydelene:
+	if abs((row)-(row+1))/row<=0.99997:
+		print('vyhovuje')
+	else:
+		print('nevyhovuje')
+
+#for o in vydelene:
+#	if abs((o)-(o+1))/o <= 0.99997:
+#		print('penis')
+#	else:
+#		print('vaginka')
+	
+
 	
 ##########################################
 #def remove_negs(linearita):
