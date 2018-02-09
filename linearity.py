@@ -11,7 +11,7 @@ filename=input('Enter filename ')
 rawfile = open(filename, 'r')
 #deklaruje prazdny list s nazvom points
 points = []
-
+vydelene = []
 
 #tato funkcia premiena string na float
 def tofloat(string):
@@ -19,8 +19,6 @@ def tofloat(string):
         return float(string)
     return 0.0
 
-
-	
 
 #tato funkcia prechadza input subor riadok po riadku
 for l in rawfile:
@@ -38,11 +36,14 @@ for l in rawfile:
 		deformacia = tofloat(split[1])
 		#pripise hodnoty napatia a deformacie do listu points
 		points.append(napatie/deformacia)
-		
 
-		
 for x in points:
-	print((x+1)/x)
+	if x == 0 in points:
+		print('0')
+	else:
+		vydelene.append((x+1)/x)
+print(vydelene)
+
 	
 ##########################################
 #def remove_negs(linearita):
@@ -52,8 +53,9 @@ for x in points:
 ##########################################
 
 
-podiel_file=Path(filename).stem + "_linearita.csv"
-print(podiel_file)
-with open(podiel_file, 'w') as output_file:
-	file_writer = csv.writer(output_file)
-	file_writer.writerows(points)
+#podiel_file=Path(filename).stem + "_linearita.csv"
+#print(podiel_file)
+#podiel_file.to_csv(podiel_file,index=False)
+#with open(podiel_file, 'w') as output_file:
+#	file_writer = csv.writer(output_file)
+#	file_writer.writerows(points)
