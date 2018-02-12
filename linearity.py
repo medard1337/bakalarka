@@ -37,28 +37,40 @@ for l in rawfile:
 		#pripise hodnoty napatia a deformacie do listu points
 		points.append(napatie/deformacia)
 
-for x in points:
-	if x == 0 in points:
-		print('0')
+
+for vydelene, i in enumerate(points):
+	if i==0:
+		print("0")
 	else:
-		vydelene.append((x+1)/x)
-print(vydelene)
+		if vydelene>=len(points)-1:
+			print("end")
+		else:
+			if(abs(i-points[vydelene+1]))/i <= 0.005:
+				print(vydelene,"\t",i,"\t\t",(abs(i-points[vydelene+1]))/i,"\t",'\t\tsedi\n')
+			else:
+				print(vydelene,"\t",i,"\t\t",(abs(i-points[vydelene+1]))/i,'\t','\t\tnesedi\n')
 
-#for u in vydelene:
-#	print (abs((u)-(u+1))/u)
-
-for row in vydelene:
-	if abs((row)-(row+1))/row<=0.99997:
-		print('vyhovuje')
-	else:
-		print('nevyhovuje')
-
-#for o in vydelene:
-#	if abs((o)-(o+1))/o <= 0.99997:
-#		print('penis')
+		
+#for x in points:
+#	if x == 0 in points:
+#		print('0')
 #	else:
-#		print('vaginka')
+#		vydelene.append((x+1)/x)
+
+
+
+#print("------------------------------------------")
+#for j in vydelene:
+	#print(abs((j)-(j+1))/j)
+	#print(j)
+	#print(j+1)
+
 	
+#for u in vydelene:
+#	if abs((u)-(u+1))/u >= 0.99999:
+#		print("Vaginka")
+#	else:
+#		print("analik")
 
 	
 ##########################################
