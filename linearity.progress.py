@@ -71,9 +71,12 @@ for vydelene, i in enumerate(points):
 		if vydelene>=len(points)-1:
 			print("end")
 		else:
-			if(abs(i-points[vydelene+1]))/i <= 0.05:
+			if(abs(i-points[vydelene+1]))/i <= 0.01:
 				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,"\t",'\t\tsedi\n')
 				klz = 0
+				medza_klzu = sigma[vydelene-5]
+				young = points[0:vydelene]
+				helper = vydelene
 			else:
 				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,'\t','\t\tnesedi\n')
 				klz = klz + 1
@@ -82,11 +85,13 @@ for vydelene, i in enumerate(points):
 					medza_klzu = sigma[vydelene-5]
 					young = points[0:vydelene]
 					helper = vydelene
-print('\n---------------------------------\n Modul pruznosti je:',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
+
+					
+print('\n---------------------------------\n Modul pruznosti :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
 #najde medzu pevnosti a maximalne predlzenie
-print('*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta,key=float),3))*100,'%\n---------------------------------\n')
-print('\n---------------------------------\n Medza pevnosti =', round(max(sigma,key=float),3),'MPa \n---------------------------------\n')
+print('\n*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta,key=float),3))*100,'%\n---------------------------------\n')
+print('\n---------------------------------\n Medza pevnosti :', round(max(sigma,key=float),3),'MPa \n---------------------------------\n')
 #print('\n---------------------------------\n Maximalna deformacia: ', round(max(delta,key=float),3),'\n---------------------------------\n')
-print('\n---------------------------------\n Medza klzu: ', round(medza_klzu,3),'MPa\n---------------------------------\n')
+print('\n---------------------------------\n Medza klzu :', round(medza_klzu,3),'MPa\n---------------------------------\n')
 
 
