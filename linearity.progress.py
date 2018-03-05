@@ -61,8 +61,8 @@ for l in rawfile:
 			points.append(napatie/deformacia)
 
 
-pocitadlo_active = True
-pocitadlo = 0
+klz_pocitadlo = True
+klz = 0
 #tato funkcia najde youngov modul pruznosti pre kazdy point a porovna ho s nasledujucim 
 for vydelene, i in enumerate(points):
 	if i==0:
@@ -71,23 +71,22 @@ for vydelene, i in enumerate(points):
 		if vydelene>=len(points)-1:
 			print("end")
 		else:
-			if(abs(i-points[vydelene+1]))/i <= 0.01:
+			if(abs(i-points[vydelene+1]))/i <= 0.05:
 				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,"\t",'\t\tsedi\n')
-				pocitadlo = 0
+				klz = 0
 			else:
 				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,'\t','\t\tnesedi\n')
-				pocitadlo = pocitadlo + 1
-				if pocitadlo == 10 and pocitadlo_active == True:
-					pocitadlo_active = False
-					print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,'\t','\t\t*-*-*-*-*-*-*-MEDZA KLZU*-*-*-*-*-*-*-*-*-*\n')
-					medza_klzu = sigma[vydelene]
-					
+				klz = klz + 1
+				if klz == 10 and klz_pocitadlo == True:
+					klz_pocitadlo = False
+					medza_klzu = sigma[vydelene-5]
+					young = i
 
 
 #najde medzu pevnosti a maximalne predlzenie
 print('*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta,key=float),3))*100,'%\n---------------------------------\n')
 print('\n---------------------------------\n Medza pevnosti =', round(max(sigma,key=float),3),'MPa \n---------------------------------\n')
-print('\n---------------------------------\n Maximalna deformacia: ', round(max(delta,key=float),3),'\n---------------------------------\n')
-print('\n---------------------------------\n Medza klzu: ', medza_klzu,'MPa\n---------------------------------\n')
+#print('\n---------------------------------\n Maximalna deformacia: ', round(max(delta,key=float),3),'\n---------------------------------\n')
+print('\n---------------------------------\n Medza klzu: ', round(medza_klzu,3),'MPa\n---------------------------------\n')
 
 
