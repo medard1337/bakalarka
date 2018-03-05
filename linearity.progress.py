@@ -80,9 +80,9 @@ for vydelene, i in enumerate(points):
 				if klz == 10 and klz_pocitadlo == True:
 					klz_pocitadlo = False
 					medza_klzu = sigma[vydelene-5]
-					young = i
-
-
+					young = points[0:vydelene]
+					helper = vydelene
+print('\n---------------------------------\n Modul pruznosti je:',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
 #najde medzu pevnosti a maximalne predlzenie
 print('*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta,key=float),3))*100,'%\n---------------------------------\n')
 print('\n---------------------------------\n Medza pevnosti =', round(max(sigma,key=float),3),'MPa \n---------------------------------\n')
