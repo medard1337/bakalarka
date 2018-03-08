@@ -74,15 +74,12 @@ for vydelene, i in enumerate(points):
 			if(abs(i-points[vydelene+1]))/i <= 0.01:
 				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,"\t",'\t\tsedi\n')
 				klz = 0
-				medza_klzu = sigma[vydelene-5]
-				young = points[0:vydelene]
-				helper = vydelene
 			else:
 				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,'\t','\t\tnesedi\n')
 				klz = klz + 1
 				if klz == 10 and klz_pocitadlo == True:
 					klz_pocitadlo = False
-					medza_klzu = sigma[vydelene-5]
+					medza_klzu = sigma[vydelene-8]
 					young = points[0:vydelene]
 					helper = vydelene
 
