@@ -49,7 +49,7 @@ p.order
 plt.title('Ťahový diagram')
 plt.xlabel('deformacia')
 plt.ylabel('napatie')
-plt.plot(x,p(x),"r--")
+#plt.plot(x,p(x),"r--")
 plt.show()
 
 

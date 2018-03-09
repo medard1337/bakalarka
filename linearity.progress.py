@@ -18,6 +18,7 @@ vydelene = []
 sigma = []
 delta = []
 
+
 #tato funkcia premiena string na float
 def tofloat(string):
 	if (string):
@@ -60,7 +61,8 @@ for l in rawfile:
 		else:
 			points.append(napatie/deformacia)
 
-
+n = len(points)
+deleec = n/100
 klz_pocitadlo = True
 klz = 0
 #tato funkcia najde youngov modul pruznosti pre kazdy point a porovna ho s nasledujucim 
@@ -68,22 +70,25 @@ for vydelene, i in enumerate(points):
 	if i==0:
 		print("0")
 	else:
-		if vydelene>=len(points)-1:
+		if vydelene>=len(points)-40:
 			print("end")
 		else:
-			if(abs(i-points[vydelene+1]))/i <= 0.01:
-				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,"\t",'\t\tsedi\n')
+			if(abs(i-points[vydelene+40]))/i <= 0.005:
+				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+40]))/i,"\t",'\t\tsedi\n')
 				klz = 0
 			else:
-				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+1]))/i,'\t','\t\tnesedi\n')
+				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+40]))/i,'\t','\t\tnesedi\n')
 				klz = klz + 1
 				if klz == 10 and klz_pocitadlo == True:
 					klz_pocitadlo = False
-					medza_klzu = sigma[vydelene-8]
+					medza_klzu = sigma[vydelene]
 					young = points[0:vydelene]
 					helper = vydelene
 
-					
+print(max(points, key=float)/100000)
+print(len(points))
+print(helper)
+print(sum(young))					
 print('\n---------------------------------\n Modul pruznosti :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
 #najde medzu pevnosti a maximalne predlzenie
 print('\n*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta,key=float),3))*100,'%\n---------------------------------\n')
