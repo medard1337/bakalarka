@@ -24,6 +24,7 @@ delta_alfa = []
 napatie = []
 deformacia = []
 splitter = []
+penor = []
 
 #tato funkcia premiena string na float
 def tofloat(string):
@@ -59,20 +60,27 @@ for l in rawfile:
 		sigma_alfa.append(napatie)
 		delta_alfa.append(deformacia)
 		graf_list.append([deformacia,napatie])
+
+print(graf_list[0])
+points = [(b,a) for (a,b) in graf_list if a>0 and a<2500000  and b>0]
+print(points[0])
+points = [(a/b) for (a,b) in points if  a/b < 250000]
+print(points[0])
+print(len(points))
+		#print(points)
+		#print(delta_alfa)
+		#zipped = [(x,y) for each x in(sigma_alfa) for y in(delta_alfa) if y > 0]
+		#zipped = list(zip(sigma_alfa, delta_alfa))
+		#print(zipped)
 		#sigma = list(filter(lambda x: x >= 0, sigma_alfa))
 		#delta = list(filter(lambda x: x>0, delta_alfa))
-		points = [float(b) / float(m) for b, m in zip(sigma_alfa, delta_alfa)]
-		#if delta == 0:
-		#	print('Error: Division by zero\nStlpce vo vstupnom subore su pravdepodobne vymenene.')
-		#	sys.exit(0)
-		#else:
-		#	points = [float(b) / float(m) for b, m in zip(sigma, delta)]
-			
+		#points = [float(b) / float(m) for b, m in zip(sigma_alfa, delta_alfa)]
+		
 
 
 
 n=len(points)
-delenec = int(round(n/10))
+delenec = int(round(n/3))
 
 klz_pocitadlo = True
 klz = 0
@@ -84,7 +92,7 @@ for i, vydelene in enumerate(points):
 		if i>=len(points)-delenec:
 			print("end")
 		else:
-			if(abs(vydelene-points[i+delenec]))/vydelene <= 0.1:
+			if(abs(vydelene-points[i+delenec]))/vydelene <= 0.01:
 				#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,"\t",'\t\tsedi\n')
 				klz = 0
 			else:
@@ -92,7 +100,7 @@ for i, vydelene in enumerate(points):
 				klz = klz + 1
 				if klz == 10 and klz_pocitadlo == True:
 					klz_pocitadlo = False
-					medza_klzu = sigma_alfa[i]
+					medza_klzu = points[i]
 					young = points[0:i]
 					helper = i
 t2=time.time()
@@ -100,10 +108,8 @@ t2=time.time()
 print(points[0],'----prva hodnota points\n')
 print(t2-t1,'[s]---- trvanie\n')
 
-#print(min(sigma, key=float),'\n')
-#print(min(delta, key=float),'\n')
-print(min(delta_alfa, key=float),'----minimalna deformacia\n')
-print(min(sigma_alfa, key=float),'----minimalne napatie\n')
+
+
 print(len(points),"Pocet hodnot.")
 print(helper,"Index hodnoty medzy klzu.")
 print('\n---------------------------------\n Modul pruznosti :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
@@ -111,7 +117,7 @@ print('\n---------------------------------\n Modul pruznosti :',round((((sum(you
 print('\n*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta_alfa,key=float),3))*100,'%\n---------------------------------\n')
 print('\n---------------------------------\n Medza pevnosti :', round(max(sigma_alfa,key=float),3),'MPa \n---------------------------------\n')
 #print('\n---------------------------------\n Maximalna deformacia: ', round(max(delta,key=float),3),'\n---------------------------------\n')
-print('\n---------------------------------\n Medza klzu :', round(medza_klzu,3),'MPa\n---------------------------------\n')
+print('\n---------------------------------\n Medza klzu :', round(medza_klzu/1000,3),'MPa\n---------------------------------\n')
 
 #deklaruje premennu data v ktorej su hodnoty z points zoradene do radu
 data = np.array(graf_list)
