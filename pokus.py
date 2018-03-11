@@ -63,17 +63,13 @@ for l in rawfile:
 
 print(graf_list[0])
 povodne_points = [(b,a) for (a,b) in graf_list if  a<2500000  and b>0]
-print(povodne_points[0])
 points = [(a/b) for (a,b) in povodne_points if 40000 < a/b < 250000]
-print(points[0])
-print(len(points))
-		
-		
+	
 
 
 
 n=len(points)
-delenec = int(round(n/5))
+delenec = int(ceil(n/10))
 
 klz_pocitadlo = True
 klz = 0
@@ -82,7 +78,7 @@ for i, vydelene in enumerate(points):
 	if i>=len(points)-delenec:
 		pass
 	else:
-		if i>=len(points)-delenec and (abs(vydelene-points[i+delenec]))/vydelene <= 0.05:
+		if i>=len(points)-delenec and (abs(vydelene-points[i+delenec]))/vydelene <= 0.1:
 			klz = 0
 		else:
 			klz = klz + 1
@@ -93,14 +89,13 @@ for i, vydelene in enumerate(points):
 				helper = i
 
 
-print(povodne_points)
-#print(points)
-b, a = max([(b, a) for (a, b) in povodne_points if a/b < sum(young)/helper], key=lambda x: x[1]); print(a/b)		
+
+
+
 #a, b = max([(a, b) for (a,b) in povodne_points if a/b < sum(young)/helper], key=lambda x: x[1]); print(a/b)				
-maximum = [(a/b) for (a,b) in povodne_points if a/b < sum(young)/helper+(sum(young)/helper)*0.3]
-print(max(maximum,key=float),'pokusna medza klzu\n')
-print(max([(a/b, b) for (a,b) in povodne_points if a/b < sum(young)/helper], key=lambda x: x[1])[0],'pokusssssss')
-#print('\n',povodne_points,'\n')				
+maximum = [(a/b) for (a,b) in povodne_points if a/b < sum(young)/helper+(sum(young)/helper)]
+hovno =max([(a/b, b) for (a,b) in povodne_points if a/b > (sum(young)/helper)], key=lambda x: x[1])[0]
+print('\n',hovno,'\n')				
 t2=time.time()
 print('\n',points[0],'----prva hodnota points\n')
 print(t2-t1,'[s]---- trvanie\n')
@@ -114,7 +109,7 @@ print('\n---------------------------------\n Modul pruznosti :',round((((sum(you
 print('\n*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta_alfa,key=float),3))*100,'%\n---------------------------------\n')
 print('\n---------------------------------\n Medza pevnosti :', round(max(sigma_alfa,key=float),3),'MPa \n---------------------------------\n')
 #print('\n---------------------------------\n Maximalna deformacia: ', round(max(delta,key=float),3),'\n---------------------------------\n')
-print('\n---------------------------------\n Medza klzu :', round(medza_klzu/1000,3),'MPa\n---------------------------------\n')
+print('\n---------------------------------\n Medza klzu :', round(max(maximum,key=float)/1000,3),'MPa\n---------------------------------\n')
 
 #deklaruje premennu data v ktorej su hodnoty z points zoradene do radu
 data = np.array(graf_list)
