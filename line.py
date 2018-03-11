@@ -8,6 +8,7 @@ from math import ceil
 import decimal
 import collections
 import sys, traceback
+import time
 
 #otvori subor
 filename=input('Enter filename ')
@@ -29,7 +30,7 @@ def tofloat(string):
 	if (string):
 		return float(string)
 	return 0.0
-
+t1 = time.time()
 #invertor osi
 inverter = str(input("Aky format maju vstupne udaje? (A)Napatie/Deformacia alebo (B)Deformacia/Napatie?(A/B)\n"))
 
@@ -58,15 +59,16 @@ for l in rawfile:
 		sigma_alfa.append(napatie)
 		delta_alfa.append(deformacia)
 		graf_list.append([deformacia,napatie])
-		sigma = [x for x in sigma_alfa if x >= 0]
-		delta = [x for x in delta_alfa if x >= 0]
-		
-		if delta == 0:
-			print('Error: Division by zero\nStlpce vo vstupnom subore su pravdepodobne vymenene.')
-			sys.exit(0)
-		else:
-			points = [float(b) / float(m) for b, m in zip(sigma, delta)]
+		#sigma = list(filter(lambda x: x >= 0, sigma_alfa))
+		#delta = list(filter(lambda x: x>0, delta_alfa))
+		points = [float(b) / float(m) for b, m in zip(sigma_alfa, delta_alfa)]
+		#if delta == 0:
+		#	print('Error: Division by zero\nStlpce vo vstupnom subore su pravdepodobne vymenene.')
+		#	sys.exit(0)
+		#else:
+		#	points = [float(b) / float(m) for b, m in zip(sigma, delta)]
 			
+
 
 
 n=len(points)
@@ -75,36 +77,39 @@ delenec = int(round(n/10))
 klz_pocitadlo = True
 klz = 0
 #tato funkcia najde youngov modul pruznosti pre kazdy point a porovna ho s nasledujucim 
-for vydelene, i in enumerate(points):
-	if i==0:
+for i, vydelene in enumerate(points):
+	if vydelene==0:
 		print("0")
 	else:
-		if vydelene>=len(points)-delenec:
+		if i>=len(points)-delenec:
 			print("end")
 		else:
-			if(abs(i-points[vydelene+delenec]))/i <= 0.05:
-				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,"\t",'\t\tsedi\n')
+			if(abs(vydelene-points[i+delenec]))/vydelene <= 0.1:
+				#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,"\t",'\t\tsedi\n')
 				klz = 0
 			else:
-				print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,'\t','\t\tnesedi\n')
+				#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,'\t','\t\tnesedi\n')
 				klz = klz + 1
 				if klz == 10 and klz_pocitadlo == True:
 					klz_pocitadlo = False
-					medza_klzu = sigma[vydelene]
-					young = points[0:vydelene]
-					helper = vydelene
+					medza_klzu = sigma_alfa[i]
+					young = points[0:i]
+					helper = i
+t2=time.time()
 
-print(n)
-print(min(sigma, key=float),'\n')
-print(min(delta, key=float),'\n')
-print(min(delta_alfa, key=float),'\n')
-print(min(sigma_alfa, key=float),'\n')
+print(points[0],'----prva hodnota points\n')
+print(t2-t1,'[s]---- trvanie\n')
+
+#print(min(sigma, key=float),'\n')
+#print(min(delta, key=float),'\n')
+print(min(delta_alfa, key=float),'----minimalna deformacia\n')
+print(min(sigma_alfa, key=float),'----minimalne napatie\n')
 print(len(points),"Pocet hodnot.")
 print(helper,"Index hodnoty medzy klzu.")
 print('\n---------------------------------\n Modul pruznosti :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
 #najde medzu pevnosti a maximalne predlzenie
-print('\n*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta,key=float),3))*100,'%\n---------------------------------\n')
-print('\n---------------------------------\n Medza pevnosti :', round(max(sigma,key=float),3),'MPa \n---------------------------------\n')
+print('\n*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta_alfa,key=float),3))*100,'%\n---------------------------------\n')
+print('\n---------------------------------\n Medza pevnosti :', round(max(sigma_alfa,key=float),3),'MPa \n---------------------------------\n')
 #print('\n---------------------------------\n Maximalna deformacia: ', round(max(delta,key=float),3),'\n---------------------------------\n')
 print('\n---------------------------------\n Medza klzu :', round(medza_klzu,3),'MPa\n---------------------------------\n')
 
