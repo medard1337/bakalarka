@@ -62,47 +62,37 @@ for l in rawfile:
 		graf_list.append([deformacia,napatie])
 
 print(graf_list[0])
-points = [(b,a) for (a,b) in graf_list if a>0 and a<2500000  and b>0]
+points = [(b,a) for (a,b) in graf_list if  a<2500000  and b>0]
 print(points[0])
-points = [(a/b) for (a,b) in points if  a/b < 250000]
+points = [(a/b) for (a,b) in points if 40000 < a/b < 250000]
 print(points[0])
 print(len(points))
-		#print(points)
-		#print(delta_alfa)
-		#zipped = [(x,y) for each x in(sigma_alfa) for y in(delta_alfa) if y > 0]
-		#zipped = list(zip(sigma_alfa, delta_alfa))
-		#print(zipped)
-		#sigma = list(filter(lambda x: x >= 0, sigma_alfa))
-		#delta = list(filter(lambda x: x>0, delta_alfa))
-		#points = [float(b) / float(m) for b, m in zip(sigma_alfa, delta_alfa)]
+		
 		
 
 
 
 n=len(points)
-delenec = int(round(n/3))
+delenec = int(round(n/5))
 
 klz_pocitadlo = True
 klz = 0
 #tato funkcia najde youngov modul pruznosti pre kazdy point a porovna ho s nasledujucim 
 for i, vydelene in enumerate(points):
-	if vydelene==0:
-		print("0")
+	if i>=len(points)-delenec:
+		pass
 	else:
-		if i>=len(points)-delenec:
-			print("end")
+		if i>=len(points)-delenec and (abs(vydelene-points[i+delenec]))/vydelene <= 0.05:
+			#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,"\t",'\t\tsedi\n')
+			klz = 0
 		else:
-			if(abs(vydelene-points[i+delenec]))/vydelene <= 0.01:
-				#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,"\t",'\t\tsedi\n')
-				klz = 0
-			else:
-				#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,'\t','\t\tnesedi\n')
-				klz = klz + 1
-				if klz == 10 and klz_pocitadlo == True:
-					klz_pocitadlo = False
-					medza_klzu = points[i]
-					young = points[0:i]
-					helper = i
+			#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,'\t','\t\tnesedi\n')
+			klz = klz + 1
+			if klz == 10 and klz_pocitadlo == True:
+				klz_pocitadlo = False
+				medza_klzu = points[i]
+				young = points[0:i]
+				helper = i
 t2=time.time()
 
 print(points[0],'----prva hodnota points\n')
@@ -134,7 +124,7 @@ p.order
 plt.title('Ťahový diagram')
 plt.xlabel('deformacia')
 plt.ylabel('napatie')
-plt.plot(x,p(x),"r--")
+#plt.plot(x,p(x),"r--")
 plt.show()
 
 
