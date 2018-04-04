@@ -34,7 +34,6 @@ def tofloat(string):
 		return float(string)
 	return 0.0
 t1 = time.time()
-
 #invertor osi
 inverter = str(input("Aky format maju vstupne udaje? (A)Napatie/Deformacia alebo (B)Deformacia/Napatie?(A/B)\n"))
 
@@ -64,15 +63,53 @@ for l in rawfile:
 		delta_alfa.append(deformacia)
 		graf_list.append([deformacia,napatie])
 
-print(type(sigma_alfa))
+print(graf_list[0])
+points = [(b,a) for (a,b) in graf_list if  a<2500000  and b>0]
+print(points[0])
+points = [(a/b) for (a,b) in points if 40000 < a/b < 250000]
+print(points[0])
+print(len(points))
+print(type(points))		
+		
 
-#print(graf_list[0])
-#points = [(b,a) for (a,b) in graf_list if  a<2500000  and b>0]
-#print(points[0])
-#points = [(a/b) for (a,b) in points if 40000 < a/b < 250000]
+
+
+n=len(points)
+delenec = int(round(n/5))
+
+klz_pocitadlo = True
+klz = 0
+#tato funkcia najde youngov modul pruznosti pre kazdy point a porovna ho s nasledujucim 
+for i, vydelene in enumerate(points):
+	if i>=len(points)-delenec:
+		pass
+	else:
+		if i>=len(points)-delenec and (abs(vydelene-points[i+delenec]))/vydelene <= 0.05:
+			#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,"\t",'\t\tsedi\n')
+			klz = 0
+		else:
+			#print(vydelene,"\t",i/100000,"\t\t",(abs(i-points[vydelene+delenec]))/i,'\t','\t\tnesedi\n')
+			klz = klz + 1
+			if klz == 10 and klz_pocitadlo == True:
+				klz_pocitadlo = False
+				medza_klzu = points[i]
+				young = points[0:i]
+				helper = i
+t2=time.time()
+
+print(points[0],'----prva hodnota points\n')
+print(t2-t1,'[s]---- trvanie\n')
 
 
 
+print(len(points),"Pocet hodnot.")
+print(helper,"Index hodnoty medzy klzu.")
+print('\n---------------------------------\n Modul pruznosti :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
+#najde medzu pevnosti a maximalne predlzenie
+print('\n*Taznost je iba informativna*\n---------------------------------\n Taznost je :',(round(max(delta_alfa,key=float),3))*100,'%\n---------------------------------\n')
+print('\n---------------------------------\n Medza pevnosti :', round(max(sigma_alfa,key=float),3),'MPa \n---------------------------------\n')
+#print('\n---------------------------------\n Maximalna deformacia: ', round(max(delta,key=float),3),'\n---------------------------------\n')
+print('\n---------------------------------\n Medza klzu :', round(medza_klzu/1000,3),'MPa\n---------------------------------\n')
 
 #deklaruje premennu data v ktorej su hodnoty z points zoradene do radu
 data = np.array(graf_list)
@@ -84,36 +121,32 @@ plt.scatter(x,y,s=0.5)
 
 #linearna regresia
 #pre funkciu y = kx + q
-xds=round(len(delta_alfa)/3)
-xs = np.array(delta_alfa[:xds])
-ys = np.array(sigma_alfa[:xds])
-#print(xs)
-
+xs = np.array([delta_alfa], dtype=np.float64)
+ys = np.array([sigma_alfa], dtype=np.float64)
 
 def fitovanie_smernica_a_intercept(xs,ys):
 	k = (((mean(xs) * mean(ys)) - mean(xs*ys)) / ((mean(xs)**2) - mean(xs**2)))
 	q = mean(ys) - k*mean(xs)
 	return k,q
 	
-#definovanie r^2 
-#def squared_error(ys_povodne, ys_priamkove):
-#	return sum(ys_priamkove-ys_povodne)
+#definovanie e^2 
+def squared_error(ys_povodne, ys_priamkove):
+	return sum((ys_priamkove-ys_povodne))
 	
 #koeficient determinantu r^2
-#def koeficient_determinantu(ys_povodne,ys_priamkove):
-#	y_mean_priamkove = [mean(ys_povodne) for y in ys_povodne]
-#	squared_error_regresie = squared_error(ys_povodne, ys_priamkove)
-#	squared_error_y_mean = squared_error(ys_povodne, y_mean_priamkove)
-#	return 1 - (squared_error_regresie / squared_error_y_mean)
+def koeficient_determinantu(ys_povodne,ys_priamkove):
+	y_mean_priamkove = [mean(ys_povodne) for y in ys_povodne]
+	squared_error_regresie = squared_error(ys_povodne, ys_priamkove)
+	squared_error_y_mean = squared_error(ys_povodne, y_mean_priamkove)
+	return 1 - (squared_error_regresie / squared_error_y_mean)
 	
 k,q = fitovanie_smernica_a_intercept(xs,ys)
 print('k = ', k, 'q = ', q)
 krivka_regresie = [(k*x)+q for x in xs]
-#r_squared = koeficient_determinantu(ys, krivka_regresie)
-#print('r^2 = ', r_squared)
 
-t2=time.time()
-print(t2-t1,'[s]---- trvanie\n')
+r_squared = koeficient_determinantu(ys, krivka_regresie)
+print('r^2 = ', r_squared)
+
 from scipy.interpolate import *
 #toto fituje krivku k bodom.
 fit=np.polyfit(x,y,15)
@@ -123,7 +156,7 @@ plt.title('Ťahový diagram')
 plt.xlabel('deformacia')
 plt.ylabel('napatie')
 #plt.plot(x,p(x),"r--")
-plt.plot(xs, krivka_regresie,"r--")
+plt.plot(xs, krivka_regresie)
 plt.show()
 
 

@@ -64,7 +64,13 @@ for l in rawfile:
 		delta_alfa.append(deformacia)
 		graf_list.append([deformacia,napatie])
 
-print(type(sigma_alfa))
+points = [(b,a) for (a,b) in graf_list if 400< a <2500000  and b>0]
+#points = [(a/b) for (a,b) in points if 40000 < a/b < 250000]
+print(points)
+anal = np.array(points)
+sigma_alfa, delta_alfa = anal.T
+print(min(sigma_alfa,key=float))
+
 
 #print(graf_list[0])
 #points = [(b,a) for (a,b) in graf_list if  a<2500000  and b>0]
