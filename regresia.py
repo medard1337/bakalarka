@@ -63,7 +63,7 @@ for l in rawfile:
 		sigma_alfa.append(napatie)
 		delta_alfa.append(deformacia)
 		graf_list.append([deformacia,napatie])
-
+print(graf_list[0])
 points = [(b,a) for (a,b) in graf_list if 400< a <2500000  and b>0]
 #points = [(a/b) for (a,b) in points if 40000 < a/b < 250000]
 print(points)
