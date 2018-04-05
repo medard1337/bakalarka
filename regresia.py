@@ -61,11 +61,11 @@ for l in rawfile:
 		else:
 			print('Zly vyber, kokot')
 
-		if (5 < napatie < 2500000 and deformacia > 0):
+		if (10 < napatie < 2500000 ):
 			filtered_list.append([napatie, deformacia])
 
-		sigma_alfa.append(napatie)
-		delta_alfa.append(deformacia)
+		sigma.append(napatie)
+		delta.append(deformacia)
 		graf_list.append([deformacia,napatie])
 		if deformacia == 0:
 			print('Error: Division by zero\nStlpce vo vstupnom subore su pravdepodobne vymenene.')
@@ -111,7 +111,7 @@ for i, vydelene in enumerate(points):
 				klz = klz + 1
 				if klz == 10 and klz_pocitadlo == True:
 					klz_pocitadlo = False
-					medza_klzu = sigma_alfa[i]
+					medza_klzu = sigma[i]
 					young = points[0:i]
 					helper = i
 
@@ -138,7 +138,6 @@ regres2=(sum(young)/helper)
 k,q = fitovanie_smernica_a_intercept(xs,ys)
 print('k = ', k, 'q = ', q)
 krivka_regresie = [(k*x)+q for x in xs]
-krivka_regresie2 = [(regres2*x)+q for x in xs]
 #r_squared = koeficient_determinantu(ys, krivka_regresie)
 #print('r^2 = ', r_squared)
 print('\n---------------------------------\n Modul pruznosti 1 :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
