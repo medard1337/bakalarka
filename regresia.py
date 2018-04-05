@@ -61,24 +61,21 @@ for l in rawfile:
 		else:
 			print('Zly vyber, kokot')
 
-		if (20 < napatie < 2500000 and deformacia > 0):
+		if (5 < napatie < 2500000 and deformacia > 0):
 			filtered_list.append([napatie, deformacia])
 
 		sigma_alfa.append(napatie)
 		delta_alfa.append(deformacia)
 		graf_list.append([deformacia,napatie])
+		if deformacia == 0:
+			print('Error: Division by zero\nStlpce vo vstupnom subore su pravdepodobne vymenene.')
+			sys.exit(0)
+		else:
+			points.append(napatie/deformacia)
+		
 
-print(filtered_list[0])
 anal = np.array(filtered_list)
 sigma_alfa, delta_alfa = anal.T
-print(min(sigma_alfa,key=float))
-
-
-#print(graf_list[0])
-#points = [(b,a) for (a,b) in graf_list if  a<2500000  and b>0]
-#print(points[0])
-#points = [(a/b) for (a,b) in points if 40000 < a/b < 250000]
-
 
 
 
@@ -92,10 +89,33 @@ plt.scatter(x,y,s=0.5)
 
 #linearna regresia
 #pre funkciu y = kx + q
-xds=round(len(delta_alfa)/3)
+xds=round(len(delta_alfa)/10)
 xs = np.array(delta_alfa[:xds])
 ys = np.array(sigma_alfa[:xds])
 #print(xs)
+
+
+klz_pocitadlo = True
+klz = 0
+#tato funkcia najde youngov modul pruznosti pre kazdy point a porovna ho s nasledujucim 
+for i, vydelene in enumerate(points):
+	if vydelene ==0:
+		pass
+	else:
+		if i>=len(points)-1:
+			pass
+		else:
+			if(abs(vydelene-points[i+1]))/vydelene <= 0.05:
+				klz = 0
+			else:
+				klz = klz + 1
+				if klz == 10 and klz_pocitadlo == True:
+					klz_pocitadlo = False
+					medza_klzu = sigma_alfa[i]
+					young = points[0:i]
+					helper = i
+
+
 
 
 def fitovanie_smernica_a_intercept(xs,ys):
@@ -114,12 +134,15 @@ def fitovanie_smernica_a_intercept(xs,ys):
 #	squared_error_y_mean = squared_error(ys_povodne, y_mean_priamkove)
 #	return 1 - (squared_error_regresie / squared_error_y_mean)
 
+regres2=(sum(young)/helper)
 k,q = fitovanie_smernica_a_intercept(xs,ys)
-print('k = ', k/100000, 'q = ', q)
+print('k = ', k, 'q = ', q)
 krivka_regresie = [(k*x)+q for x in xs]
+krivka_regresie2 = [(regres2*x)+q for x in xs]
 #r_squared = koeficient_determinantu(ys, krivka_regresie)
 #print('r^2 = ', r_squared)
-
+print('\n---------------------------------\n Modul pruznosti 1 :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
+print('\n---------------------------------\n Modul pruznosti 2 :',round(k/100000,3),'\n---------------------------------\n')
 t2=time.time()
 print(t2-t1,'[s]---- trvanie\n')
 from scipy.interpolate import *
@@ -130,6 +153,5 @@ p.order
 plt.title('Ťahový diagram')
 plt.xlabel('deformacia')
 plt.ylabel('napatie')
-#plt.plot(x,p(x),"r--")
 plt.plot(xs, krivka_regresie,"r--")
 plt.show()
