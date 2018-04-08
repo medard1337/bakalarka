@@ -26,7 +26,7 @@ delta_alfa = []
 napatie = []
 deformacia = []
 splitter = []
-penor = []
+peror = []
 
 #tato funkcia premiena string na float
 def tofloat(string):
@@ -57,7 +57,7 @@ for l in rawfile:
 			napatie = tofloat(split[1])
 			deformacia = tofloat(split[0])
 		else:
-			print('Zly vyber, kokot')
+			print('Zly vyber')
 		
 		
 		sigma_alfa.append(napatie)
@@ -117,29 +117,65 @@ xd_epsilon = round(len(delta_alfa))
 epsilon_skusane = np.array(delta_alfa[:xd_epsilon])
 sigma_skusane = np.array(sigma_alfa[:yd_sigma])
 
-#najde sigma linearne tzn. vynasobo kazdu nameranu deformaciu nasim modulom pruznosti
+#najde sigma linearne tzn. vynasobi kazdu nameranu deformaciu nasim modulom pruznosti
 def sigma_lin(lin_list):
 	lin_list = lin_list*k
 	return lin_list
 	
-#pre kazdu nameranu hodnotu napatia pripocita hodnotu 5
+#pre kazdu nameranu hodnotu napatia pripocita nejaku konstantu
 def sigma_exp(skus_list):
-	skus_list = skus_list + 5
+	skus_list = skus_list + 20
 	return skus_list
 
 K = [epsilon_skusane]	
 K = sigma_lin(epsilon_skusane)
 L = [sigma_skusane]
 L = sigma_exp(sigma_skusane)
-#print('Epsilon linearne = ',K)
-#print('Epsilon skusane = ', L)
 
-for K, L in penor:
-	if len(K) <= len(L):
-		print('kay')
+
+#vytvori z hodnot K a L arrays a potom ich pomocou boolean array porovna a najde prvu hodnotu v array K ktora odpoveda indexu  v array L a je vacsia,
+#co je medza klzu
+abc = np.array([K])
+bcd = np.array([L])
+print('\n-----------------\n 1. Medza Klzu = ',abc[abc > bcd][0],'\n-----------------\n')
+
+
+#druhy sposob najdenia medze klzu...podla vzorca ε(plasticke) = ε[celkove(to je nase namerane)] - Sigma(namerane)/E(nase vypocitane) co musi byt >= ako 0.2% z ε(celkoveho)
+def sigma_young(sigma_vydelene):
+	sigma_vydelene = sigma_vydelene/k
+	return sigma_vydelene
+
+M = [sigma_skusane]	
+M = sigma_young(sigma_skusane)
+cde = np.array([M])
+#H = sigma_vydelene
+
+def epsilon_div_sigma_young(x):
+	epsi_pl = ((x - cde)/0.002)
+	return epsi_pl
+	
+vysledok = epsilon_div_sigma_young(epsilon_skusane)
+efg = np.array([vysledok])
+fgh = np.array([delta_alfa])
+print('\n-----------------\n 2. Medza Klzu = ',(efg[efg >= fgh][0])*100000,'\n-----------------\n')
+
+
+	
+#N = epsilon_div_sigma_young(epsilon_skusane, sigma_vydelene)
+#print(M)
+#print('VYSLEDOK',vysledok)
+#print('cde',cde)
+	
+#N = [epsilon_skusane]
+#N = epsilon_div_sigma_young(epsilon_skusane)
+
+#def function(x, H):
+#	return x - H
+	
+#fun = function(epsilon_skusane)
 	
 
-		
+#print(fun)
 
 t2=time.time()
 print(t2-t1,'[s]---- trvanie\n')

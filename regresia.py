@@ -134,9 +134,55 @@ def fitovanie_smernica_a_intercept(xs,ys):
 #	squared_error_y_mean = squared_error(ys_povodne, y_mean_priamkove)
 #	return 1 - (squared_error_regresie / squared_error_y_mean)
 
-regres2=(sum(young)/helper)
 k,q = fitovanie_smernica_a_intercept(xs,ys)
-print('k = ', k, 'q = ', q)
+yd_sigma = round(len(sigma_alfa))
+xd_epsilon = round(len(delta_alfa))
+epsilon_skusane = np.array(delta_alfa[:xd_epsilon])
+sigma_skusane = np.array(sigma_alfa[:yd_sigma])
+
+#najde sigma linearne tzn. vynasobi kazdu nameranu deformaciu nasim modulom pruznosti
+def sigma_lin(lin_list):
+	lin_list = lin_list*k
+	return lin_list
+	
+#pre kazdu nameranu hodnotu napatia pripocita nejaku konstantu
+def sigma_exp(skus_list):
+	skus_list = skus_list + 5
+	return skus_list
+
+K = [epsilon_skusane]	
+K = sigma_lin(epsilon_skusane)
+L = [sigma_skusane]
+L = sigma_exp(sigma_skusane)
+
+
+#vytvori z hodnot K a L arrays a potom ich pomocou boolean array porovna a najde prvu hodnotu v array K ktora odpoveda indexu  v array L a je vacsia,
+#co je medza klzu
+abc = np.array([K])
+bcd = np.array([L])
+print('\n-----------------\n 1. Medza Klzu = ',abc[abc > bcd][0],'\n-----------------\n')
+
+
+#druhy sposob najdenia medze klzu...podla vzorca ε(plasticke) = ε[celkove(to je nase namerane)] - Sigma(namerane)/E(nase vypocitane) co musi byt >= ako 0.2% z ε(celkoveho)
+def sigma_young(sigma_vydelene):
+	sigma_vydelene = sigma_vydelene/k
+	return sigma_vydelene
+
+M = [sigma_skusane]	
+M = sigma_young(sigma_skusane)
+cde = np.array([M])
+
+def epsilon_div_sigma_young(x):
+	epsi_pl = ((x - cde)/0.002)
+	return epsi_pl
+	
+vysledok = epsilon_div_sigma_young(epsilon_skusane)
+efg = np.array([vysledok])
+fgh = np.array([delta_alfa])
+print('\n-----------------\n 2. Medza Klzu = ',(efg[efg >= fgh][0])*100000,'\n-----------------\n')
+
+regres2=(sum(young)/helper)
+print('E = ', k/100000, 'q = ', q)
 krivka_regresie = [(k*x)+q for x in xs]
 #r_squared = koeficient_determinantu(ys, krivka_regresie)
 #print('r^2 = ', r_squared)
