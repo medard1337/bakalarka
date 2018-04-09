@@ -150,7 +150,7 @@ def sigma_exp(skus_list):
 	skus_list = skus_list + 5
 	return skus_list
 
-K = [epsilon_skusane]	
+K = [epsilon_skusane]
 K = sigma_lin(epsilon_skusane)
 L = [sigma_skusane]
 L = sigma_exp(sigma_skusane)
@@ -181,12 +181,19 @@ efg = np.array([vysledok])
 fgh = np.array([delta_alfa])
 print('\n-----------------\n 2. Medza Klzu = ',(efg[efg >= fgh][0])*100000,'\n-----------------\n')
 
-regres2=(sum(young)/helper)
+try:
+	regres2=(sum(young)/helper)
+except NameError:
+	pass
 print('E = ', k/100000, 'q = ', q)
 krivka_regresie = [(k*x)+q for x in xs]
 #r_squared = koeficient_determinantu(ys, krivka_regresie)
 #print('r^2 = ', r_squared)
-print('\n---------------------------------\n Modul pruznosti 1 :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
+try: 
+	print('\n---------------------------------\n Modul pruznosti 1 :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
+except NameError:
+	pass
+
 print('\n---------------------------------\n Modul pruznosti 2 :',round(k/100000,3),'\n---------------------------------\n')
 t2=time.time()
 print(t2-t1,'[s]---- trvanie\n')
