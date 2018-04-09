@@ -65,24 +65,26 @@ for l in rawfile:
 		if (10 < napatie < 2500000 and deformacia > 0 ):
 			filtered_list.append([napatie, deformacia])
 
+
 		sigma.append(napatie)
 		delta.append(deformacia)
 		graf_list.append([deformacia,napatie])
 		if deformacia == 0:
-			print('Error: Division by zero\nStlpce vo vstupnom subore su pravdepodobne vymenene.')
+			print('si kokot ty kokot')
 			sys.exit(0)
 		else:
 			points.append(napatie/deformacia)
+
+print(min(filtered_list))
+print(min(points))
 
 #transponovanie matice filtered_list
 anal = np.array(filtered_list)
 sigma_alfa, delta_alfa = anal.T
 
-#deklaruje premennu data v ktorej su hodnoty z points zoradene do radu
+#kreslenie scatter grafu z dat v liste points
 data = np.array(graf_list)
-#transponuje maticu data
 x,y = data.T
-#kresli scatter graf z matice data
 plt.scatter(x,y,s=0.5)
 
 #linearna regresia pre funkciu y = kx + q
@@ -167,11 +169,8 @@ efg = np.array([vysledok])
 fgh = np.array([delta_alfa])
 print('\n-----------------\n 2. Medza Klzu = ',(efg[efg >= fgh][0])*100000,'\n-----------------\n')
 
-try:
-	regres2=(sum(young)/helper)
-except NameError:
-	pass
-print('E = ', k/100000, 'q = ', q)
+#koeficienty regresie
+print('k = ', k/100000, 'q = ', q)
 krivka_regresie = [(k*x)+q for x in xs]
 
 #modul pruznosti z povodnej metody
