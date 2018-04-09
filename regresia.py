@@ -69,19 +69,39 @@ for l in rawfile:
 		sigma.append(napatie)
 		delta.append(deformacia)
 		graf_list.append([deformacia,napatie])
-		if deformacia == 0:
-			print('si kokot ty kokot')
-			sys.exit(0)
-		else:
-			points.append(napatie/deformacia)
+		#if deformacia == 0:
+		#	print('si kokot ty kokot')
+		#	sys.exit(0)
+		#else:
+		#	points.append(napatie/deformacia)
+		#points=[filtered_list[0]/filtered_list[1]]
 
-print(min(filtered_list))
-print(min(points))
 
+#points=[filtered_list[0],filtered_list[1]]
 #transponovanie matice filtered_list
 anal = np.array(filtered_list)
 sigma_alfa, delta_alfa = anal.T
+boner = anal.T
+#print(boner[0]/boner[1])
+#points=[boner[0]/boner[1]]
+points = [(a/b) for (a,b) in filtered_list]
+type(points)
 
+
+klz_pocitadlo = True
+klz = 0
+for i, hodnota in enumerate(points):
+	if len(points) -2 >=i and (abs(points[i]-points[i+1])/points[i]) <= 0.01:
+		klz = 0
+	else:
+		klz = klz + 1
+		if klz == 10 and klz_pocitadlo == True:
+			klz_pocitadlo = False
+			medza_klzu = sigma[i]
+			young = points[:i]
+			helper = i
+			
+	
 #kreslenie scatter grafu z dat v liste points
 data = np.array(graf_list)
 x,y = data.T
@@ -91,28 +111,6 @@ plt.scatter(x,y,s=0.5)
 xds=round(len(delta_alfa)/10)
 xs = np.array(delta_alfa[:xds])
 ys = np.array(sigma_alfa[:xds])
-
-
-klz_pocitadlo = True
-klz = 0
-#tento cyklus rata modul pruznosti z kazdej dvojice [napatie, deformacia] a porovna ci sa lisi o 5% od nasledujuceho
-for i, vydelene in enumerate(points):
-	if vydelene ==0:
-		pass
-	else:
-		if i>=len(points)-1:
-			pass
-		else:
-			if(abs(vydelene-points[i+1]))/vydelene <= 0.05:
-				klz = 0
-			else:
-				klz = klz + 1
-				if klz == 10 and klz_pocitadlo == True:
-					klz_pocitadlo = False
-					medza_klzu = sigma[i]
-					young = points[0:i]
-					helper = i
-
 
 
 #funkcia ktora vrati koeficienty k, q pre linearnu regresiu
@@ -175,12 +173,12 @@ krivka_regresie = [(k*x)+q for x in xs]
 
 #modul pruznosti z povodnej metody
 try:
-	print('\n---------------------------------\n Modul pruznosti 1 :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
+	print('\n---------------------------------\n Modul pruznosti 1(percentual) :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
 except NameError:
 	pass
 
 #modul pruznosti z regresie
-print('\n---------------------------------\n Modul pruznosti 2 :',round(k/100000,3),'\n---------------------------------\n')
+print('\n---------------------------------\n Modul pruznosti 2(regresia) :',round(k/100000,3),'\n---------------------------------\n')
 
 #trvanie vsetkych vypoctov programu
 t2=time.time()
