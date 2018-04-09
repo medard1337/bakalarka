@@ -12,10 +12,11 @@ import time
 from statistics import mean
 
 
-#otvori subor
+#Otvori subor zadany uzivatelom
 filename=input('Enter filename ')
 rawfile = open(filename, 'r')
-#deklaruje prazdny list s nazvom points
+
+#deklaracia prazdnych listov
 points = []
 vydelene = []
 sigma = []
@@ -25,23 +26,23 @@ sigma_alfa = []
 delta_alfa = []
 napatie = []
 deformacia = []
-splitter = []
-penor = []
 filtered_list=[]
+
 
 #tato funkcia premiena string na float
 def tofloat(string):
 	if (string):
 		return float(string)
 	return 0.0
+
+#timer
 t1 = time.time()
 
-#invertor osi
+#deklaracia premennej na invertovanie osi
 inverter = str(input("Aky format maju vstupne udaje? (A)Napatie/Deformacia alebo (B)Deformacia/Napatie?(A/B)\n"))
 
-filtered_list = []
 
-#tato funkcia prechadza input subor riadok po riadku
+#tento cyklus prechadza subor riadok po riadku a spracuva ho do citalnej podoby pre program
 for l in rawfile:
 	#ak je v riadku viac ako 0 znakov a nezacina sa "
 	if len(l) > 0 and not l.startswith('"'):
@@ -61,7 +62,7 @@ for l in rawfile:
 		else:
 			print('Zly vyber, kokot')
 
-		if (10 < napatie < 2500000 ):
+		if (10 < napatie < 2500000 and deformacia > 0 ):
 			filtered_list.append([napatie, deformacia])
 
 		sigma.append(napatie)
@@ -72,12 +73,10 @@ for l in rawfile:
 			sys.exit(0)
 		else:
 			points.append(napatie/deformacia)
-		
 
+#transponovanie matice filtered_list
 anal = np.array(filtered_list)
 sigma_alfa, delta_alfa = anal.T
-
-
 
 #deklaruje premennu data v ktorej su hodnoty z points zoradene do radu
 data = np.array(graf_list)
@@ -85,19 +84,16 @@ data = np.array(graf_list)
 x,y = data.T
 #kresli scatter graf z matice data
 plt.scatter(x,y,s=0.5)
-#print(data)
 
-#linearna regresia
-#pre funkciu y = kx + q
+#linearna regresia pre funkciu y = kx + q
 xds=round(len(delta_alfa)/10)
 xs = np.array(delta_alfa[:xds])
 ys = np.array(sigma_alfa[:xds])
-#print(xs)
 
 
 klz_pocitadlo = True
 klz = 0
-#tato funkcia najde youngov modul pruznosti pre kazdy point a porovna ho s nasledujucim 
+#tento cyklus rata modul pruznosti z kazdej dvojice [napatie, deformacia] a porovna ci sa lisi o 5% od nasledujuceho
 for i, vydelene in enumerate(points):
 	if vydelene ==0:
 		pass
@@ -117,44 +113,33 @@ for i, vydelene in enumerate(points):
 
 
 
-
+#funkcia ktora vrati koeficienty k, q pre linearnu regresiu
 def fitovanie_smernica_a_intercept(xs,ys):
 	k = (((mean(xs) * mean(ys)) - mean(xs*ys)) / ((mean(xs)**2) - mean(xs**2)))
 	q = mean(ys) - k*mean(xs)
 	return k,q
 
-#definovanie r^2
-#def squared_error(ys_povodne, ys_priamkove):
-#	return sum(ys_priamkove-ys_povodne)
-
-#koeficient determinantu r^2
-#def koeficient_determinantu(ys_povodne,ys_priamkove):
-#	y_mean_priamkove = [mean(ys_povodne) for y in ys_povodne]
-#	squared_error_regresie = squared_error(ys_povodne, ys_priamkove)
-#	squared_error_y_mean = squared_error(ys_povodne, y_mean_priamkove)
-#	return 1 - (squared_error_regresie / squared_error_y_mean)
-
+#definovanie premennych pre fitovanie
 k,q = fitovanie_smernica_a_intercept(xs,ys)
 yd_sigma = round(len(sigma_alfa))
 xd_epsilon = round(len(delta_alfa))
 epsilon_skusane = np.array(delta_alfa[:xd_epsilon])
 sigma_skusane = np.array(sigma_alfa[:yd_sigma])
 
-#najde sigma linearne tzn. vynasobi kazdu nameranu deformaciu nasim modulom pruznosti
+#najde sigma linearne tzn. vynasobi kazdu nameranu deformaciu nasim modulom pruznosti ziskanym z linearnej regresie
 def sigma_lin(lin_list):
 	lin_list = lin_list*k
 	return lin_list
 	
 #pre kazdu nameranu hodnotu napatia pripocita nejaku konstantu
 def sigma_exp(skus_list):
-	skus_list = skus_list + 5
+	skus_list = skus_list + 15
 	return skus_list
 
 K = [epsilon_skusane]
 K = sigma_lin(epsilon_skusane)
 L = [sigma_skusane]
 L = sigma_exp(sigma_skusane)
-
 
 #vytvori z hodnot K a L arrays a potom ich pomocou boolean array porovna a najde prvu hodnotu v array K ktora odpoveda indexu  v array L a je vacsia,
 #co je medza klzu
@@ -172,10 +157,11 @@ M = [sigma_skusane]
 M = sigma_young(sigma_skusane)
 cde = np.array([M])
 
+
 def epsilon_div_sigma_young(x):
 	epsi_pl = ((x - cde)/0.002)
 	return epsi_pl
-	
+
 vysledok = epsilon_div_sigma_young(epsilon_skusane)
 efg = np.array([vysledok])
 fgh = np.array([delta_alfa])
@@ -187,17 +173,20 @@ except NameError:
 	pass
 print('E = ', k/100000, 'q = ', q)
 krivka_regresie = [(k*x)+q for x in xs]
-#r_squared = koeficient_determinantu(ys, krivka_regresie)
-#print('r^2 = ', r_squared)
-try: 
+
+#modul pruznosti z povodnej metody
+try:
 	print('\n---------------------------------\n Modul pruznosti 1 :',round((((sum(young))/helper)/100000),3),'\n---------------------------------\n')
 except NameError:
 	pass
 
+#modul pruznosti z regresie
 print('\n---------------------------------\n Modul pruznosti 2 :',round(k/100000,3),'\n---------------------------------\n')
+
+#trvanie vsetkych vypoctov programu
 t2=time.time()
 print(t2-t1,'[s]---- trvanie\n')
-from scipy.interpolate import *
+
 #toto fituje krivku k bodom.
 fit=np.polyfit(x,y,15)
 p=np.poly1d(fit)
