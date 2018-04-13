@@ -121,19 +121,19 @@ def fitovanie_smernica_a_intercept(xs,ys):
 
 #definovanie premennych pre fitovanie
 k,q = fitovanie_smernica_a_intercept(xs,ys)
-yd_sigma = round(len(sigma_alfa))
-xd_epsilon = round(len(delta_alfa))
-epsilon_skusane = np.array(delta_alfa[:xd_epsilon])
-sigma_skusane = np.array(sigma_alfa[:yd_sigma])
+#yd_sigma = round(len(sigma_alfa))
+#xd_epsilon = round(len(delta_alfa))
+epsilon_skusane = np.array(delta_alfa)
+sigma_skusane = np.array(sigma_alfa)
 
 #najde sigma linearne tzn. vynasobi kazdu nameranu deformaciu nasim modulom pruznosti ziskanym z linearnej regresie
 def sigma_lin(lin_list):
-	lin_list = lin_list*k
+	lin_list = (lin_list*k)-95
 	return lin_list
 	
 #pre kazdu nameranu hodnotu napatia pripocita nejaku konstantu
 def sigma_exp(skus_list):
-	skus_list = skus_list + 15
+	skus_list = skus_list
 	return skus_list
 
 K = [epsilon_skusane]
@@ -141,11 +141,10 @@ K = sigma_lin(epsilon_skusane)
 L = [sigma_skusane]
 L = sigma_exp(sigma_skusane)
 
-#vytvori z hodnot K a L arrays a potom ich pomocou boolean array porovna a najde prvu hodnotu v array K ktora odpoveda indexu  v array L a je vacsia,
+
+#pomocou boolean array porovna arrays K a L a v arrayi L najde prvu hodnotu K > L
 #co je medza klzu
-abc = np.array([K])
-bcd = np.array([L])
-print('\n-----------------\n 1. Medza Klzu = ',abc[abc > bcd][0],'\n-----------------\n')
+print('\n-----------------\n 1. Medza Klzu(Porovnavacia) = ',L[K > L][0],'\n-----------------\n')
 
 
 #druhy sposob najdenia medze klzu...podla vzorca ε(plasticke) = ε[celkove(to je nase namerane)] - Sigma(namerane)/E(nase vypocitane) co musi byt >= ako 0.2% z ε(celkoveho)
@@ -159,13 +158,13 @@ cde = np.array([M])
 
 
 def epsilon_div_sigma_young(x):
-	epsi_pl = ((x - cde)/0.002)
+	epsi_pl = [((x - cde)/0.002)]
 	return epsi_pl
 
 vysledok = epsilon_div_sigma_young(epsilon_skusane)
 efg = np.array([vysledok])
 fgh = np.array([delta_alfa])
-print('\n-----------------\n 2. Medza Klzu = ',(efg[efg >= fgh][0])*100000,'\n-----------------\n')
+print('\n-----------------\n 2. Medza Klzu(Norma) = ',(efg[efg >= fgh][0]),'\n-----------------\n')
 
 #koeficienty regresie
 print('k = ', k/100000, 'q = ', q)
@@ -183,6 +182,8 @@ print('\n---------------------------------\n Modul pruznosti 2(regresia) :',roun
 #trvanie vsetkych vypoctov programu
 t2=time.time()
 print(t2-t1,'[s]---- trvanie\n')
+
+
 
 #toto fituje krivku k bodom.
 fit=np.polyfit(x,y,15)
