@@ -121,8 +121,6 @@ def fitovanie_smernica_a_intercept(xs,ys):
 
 #definovanie premennych pre fitovanie
 k,q = fitovanie_smernica_a_intercept(xs,ys)
-#yd_sigma = round(len(sigma_alfa))
-#xd_epsilon = round(len(delta_alfa))
 epsilon_skusane = np.array(delta_alfa)
 sigma_skusane = np.array(sigma_alfa)
 
@@ -146,7 +144,6 @@ L = sigma_exp(sigma_skusane)
 #co je medza klzu
 print('\n-----------------\n 1. Medza Klzu(Porovnavacia) = ',L[K > L][0],'\n-----------------\n')
 
-
 #druhy sposob najdenia medze klzu...podla vzorca ε(plasticke) = ε[celkove(to je nase namerane)] - Sigma(namerane)/E(nase vypocitane) co musi byt >= ako 0.2% z ε(celkoveho)
 def sigma_young(sigma_vydelene):
 	sigma_vydelene = sigma_vydelene/k
@@ -154,17 +151,13 @@ def sigma_young(sigma_vydelene):
 
 M = [sigma_skusane]	
 M = sigma_young(sigma_skusane)
-cde = np.array([M])
 
-
-def epsilon_div_sigma_young(x):
-	epsi_pl = [((x - cde)/0.002)]
+def epsilon_minus_sigma_young(epsi_pl):
+	epsi_pl = epsi_pl - M
 	return epsi_pl
 
-vysledok = epsilon_div_sigma_young(epsilon_skusane)
-efg = np.array([vysledok])
-fgh = np.array([delta_alfa])
-print('\n-----------------\n 2. Medza Klzu(Norma) = ',(efg[efg >= fgh][0]),'\n-----------------\n')
+vysledok = epsilon_minus_sigma_young(epsilon_skusane)
+print('\n-----------------\n 2. Medza Klzu(Norma) = ',sigma_alfa[vysledok > (epsilon_skusane*0.3)][0],'\n-----------------\n')
 
 #koeficienty regresie
 print('k = ', k/100000, 'q = ', q)
@@ -182,7 +175,6 @@ print('\n---------------------------------\n Modul pruznosti 2(regresia) :',roun
 #trvanie vsetkych vypoctov programu
 t2=time.time()
 print(t2-t1,'[s]---- trvanie\n')
-
 
 
 #toto fituje krivku k bodom.
