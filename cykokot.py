@@ -44,8 +44,17 @@ for l in rawfile:
 		if (Eap3 > 0 and Sa3 > 0):
 			final_list_CDK.append([Eap3, Sa3])
 
+wklist = np.array(final_list_WK)
+nf_1, sa_1 = wklist.T
+mcklist = np.array(final_list_MCK)
+nf_2, eap_2 = mcklist.T
+cdklist = np.array(final_list_CDK)
+eap_3, sa_3 = cdklist.T
+
+
 #printuje listy, iba kontrolna vec
-print('\n\ngraf wk',final_list_WK)
+print('\n\n',nf_1)
+print('\n\n\ngraf wk',final_list_WK)
 print('\n\ngraf mck',final_list_MCK)
 print('\n\ngraf cdk',final_list_CDK)
 
@@ -54,24 +63,25 @@ fig = plt.figure()
 
 #grafy z jednotlivych listov
 graf1 = fig.add_subplot(311)
-wklist = np.array(final_list_WK)
-nf_1, sa_1 = wklist.T
+
 plt.scatter(nf_1,sa_1,s=0.5)
 plt.title('qoqot')
 
 graf2 = fig.add_subplot(312)
-mcklist = np.array(final_list_MCK)
-nf_2, eap_2 = mcklist.T
+
 plt.scatter(nf_2, eap_2,s=0.5)
 plt.title('vaginqa')
 
 graf3 = fig.add_subplot(313)
-cdklist = np.array(final_list_CDK)
-eap_3, sa_3 = cdklist.T
+
 plt.scatter(eap_3,sa_3,s=0.5)
 plt.title('analiq')
 
 plt.subplots_adjust(hspace=0.8)
 plt.show()
+
+
+
+
 
 
