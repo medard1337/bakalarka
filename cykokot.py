@@ -64,6 +64,7 @@ logeap_2 = [math.log(x) for x in eap_2]
 logsa_3 = [math.log(x) for x in sa_3]
 logeap_3 = logeap_2
 
+
 #pomocou tejto funkcie zvolime body pre danu linearnu regresiu a vypluje nam to upravene x a y body
 def points_for_lin_regression(log_x_axis,log_y_axis):
 	xs = np.array(log_x_axis)
@@ -78,18 +79,22 @@ def fitovanie_slope_a_intercept(xs,ys):
 
 #linearna regresia pre krivku WK	a tvar jej usecky
 xs1,ys1 = points_for_lin_regression(logsa_1,lognf_1)
-k,q = fitovanie_slope_a_intercept(xs1,ys1)
-krivkaregresie_WK = [(k*x)+q for x in xs1]
+k1,q1 = fitovanie_slope_a_intercept(xs1,ys1)
+krivkaregresie_WK = [(k1*x)+q1 for x in xs1]
 
 # #linearna regresia pre krivku MCK a tvar jej usecky
 xs2,ys2 = points_for_lin_regression(logeap_2,lognf_2)
-k,q = fitovanie_slope_a_intercept(xs2,ys2)
-krivkaregresie_MCK = [(k*x)+q for x in xs2]
+k2,q2 = fitovanie_slope_a_intercept(xs2,ys2)
+krivkaregresie_MCK = [(k2*x)+q2 for x in xs2]
 
 #linearna regresia pre krivku CDK a tvar jej krivky
 xs3,ys3 = points_for_lin_regression(logsa_3,logeap_3)
-k,q = fitovanie_slope_a_intercept(xs3,ys3)
-krivkaregresie_CDK = [(k*x)+q for x in xs3]
+k3,q3 = fitovanie_slope_a_intercept(xs3,ys3)
+krivkaregresie_CDK = [(k3*x)+q3 for x in xs3]
+
+print('\n','koef. pre WK:','\n--------------------------\n','k =',k1,'\n','q  =',q1)
+print('\n','koef. pre WK:','\n--------------------------\n','k =',k2,'\n','q  =',q2)
+print('\n','koef. pre WK:','\n--------------------------\n','k =',k3,'\n','q  =',q3)
 
 
 
@@ -144,7 +149,7 @@ plt.xlabel('Log Sa')
 plt.ylabel('Log Eap')
 plt.plot(xs3, krivkaregresie_CDK,"r-")
 
-plt.subplots_adjust(hspace=0.8)
+plt.subplots_adjust(hspace=1.7)
 plt.show()
 
 
