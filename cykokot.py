@@ -77,19 +77,19 @@ def fitovanie_slope_a_intercept(xs,ys):
 	return k,q
 
 #linearna regresia pre krivku WK	a tvar jej usecky
-xs,ys = points_for_lin_regression(logsa_1,lognf_1)
-k,q = fitovanie_slope_a_intercept(xs,ys)
-krivkaregresie_WK = [(k*x)+q for x in xs]
+xs1,ys1 = points_for_lin_regression(logsa_1,lognf_1)
+k,q = fitovanie_slope_a_intercept(xs1,ys1)
+krivkaregresie_WK = [(k*x)+q for x in xs1]
 
 # #linearna regresia pre krivku MCK a tvar jej usecky
-xs,ys = points_for_lin_regression(logeap_2,lognf_2)
-k,q = fitovanie_slope_a_intercept(xs,ys)
-krivkaregresie_MCK = [(k*x)+q for x in xs]
+xs2,ys2 = points_for_lin_regression(logeap_2,lognf_2)
+k,q = fitovanie_slope_a_intercept(xs2,ys2)
+krivkaregresie_MCK = [(k*x)+q for x in xs2]
 
 #linearna regresia pre krivku CDK a tvar jej krivky
-xs,ys = points_for_lin_regression(logsa_3,logeap_3)
-k,q = fitovanie_slope_a_intercept(xs,ys)
-krivkaregresie_CDK = [(k*x)+q for x in xs]
+xs3,ys3 = points_for_lin_regression(logsa_3,logeap_3)
+k,q = fitovanie_slope_a_intercept(xs3,ys3)
+krivkaregresie_CDK = [(k*x)+q for x in xs3]
 
 
 
@@ -128,21 +128,21 @@ plt.scatter(logsa_1, lognf_1, s=0.9)
 plt.title('WK')
 plt.xlabel('Log Sa')
 plt.ylabel('Log 2Nf')
-plt.plot(xs, krivkaregresie_WK,"r-")
+plt.plot(xs1, krivkaregresie_WK,"r-")
 
 graf5 = fig.add_subplot(615)
 plt.scatter(logeap_2, lognf_2, s=0.9)
 plt.title('MCK')
 plt.xlabel('Log Eap')
 plt.ylabel('Log 2Nf')
-plt.plot(xs, krivkaregresie_MCK,"r-")
+plt.plot(xs2, krivkaregresie_MCK,"r-")
 
 graf6 = fig.add_subplot(616)
 plt.scatter(logsa_3, logeap_3, s=0.9)
 plt.title('CDK')
 plt.xlabel('Log Sa')
 plt.ylabel('Log Eap')
-plt.plot(xs, krivkaregresie_CDK,"r-")
+plt.plot(xs3, krivkaregresie_CDK,"r-")
 
 plt.subplots_adjust(hspace=0.8)
 plt.show()
