@@ -53,8 +53,50 @@ nf_2, eap_2 = mcklist.T
 cdklist = np.array(final_list_CDK)
 eap_3, sa_3 = cdklist.T
 
-logs = [math.log(x) for x in nf_1] 
-print(logs)
+#zlogaritmovane vsetky arraye podla toho ako su vykreslovane, tzn v krivka WK - 2Nf voci Sa,  MCK - 2Nf voci Eap, CDK - Sa voci Eap
+#2Nf je dvojnasobok poctu cyklov, Eap je deformacia ktora vznikla na meranej vzorke, Sa je sigma a - napatie
+#2Nf musim logaritmovat aj pre WK aj MCK pretoze maju rozlisne rozmery ale, ale Eap staci logaritmovat iba raz pretoze aj MCK aj CDK 
+#maju rovnake rozmery, Sa musim taktie logaritmovat 2 krat, raz pre WK a raz pre CDK
+lognf_1 = [math.log(x) for x in nf_1]
+logsa_1 = [math.log(x) for x in sa_1]
+lognf_2 = [math.log(x) for x in nf_2]
+logeap_2 = [math.log(x) for x in eap_2]
+logsa_3 = [math.log(x) for x in sa_3]
+logeap_3 = logeap_2
+
+#pomocou tejto funkcie zvolime body pre danu linearnu regresiu a vypluje nam to upravene x a y body
+def points_for_lin_regression(log_x_axis,log_y_axis):
+	xs = np.array(log_x_axis)
+	ys = np.array(log_y_axis)
+	return xs,ys
+	
+#funkcia z ktorej dostaneme koeficienty krivky linearnej regresie pre dany graf	
+def fitovanie_slope_a_intercept(xs,ys):
+	k = (((mean(xs) * mean(ys)) - mean(xs*ys)) / ((mean(xs)**2) - mean(xs**2)))
+	q = mean(ys) - k*mean(xs)
+	return k,q
+
+#linearna regresia pre krivku WK	a tvar jej usecky
+xs,ys = points_for_lin_regression(logsa_1,lognf_1)
+k,q = fitovanie_slope_a_intercept(xs,ys)
+krivkaregresie_WK = [(k*x)+q for x in xs]
+
+# #linearna regresia pre krivku MCK a tvar jej usecky
+xs,ys = points_for_lin_regression(logeap_2,lognf_2)
+k,q = fitovanie_slope_a_intercept(xs,ys)
+krivkaregresie_MCK = [(k*x)+q for x in xs]
+
+#linearna regresia pre krivku CDK a tvar jej krivky
+xs,ys = points_for_lin_regression(logsa_3,logeap_3)
+k,q = fitovanie_slope_a_intercept(xs,ys)
+krivkaregresie_CDK = [(k*x)+q for x in xs]
+
+
+
+#print('lognf_1',lognf_1)
+#print('nf_1',nf_1)
+#print('logsa_1',logsa_1)
+#print('sa_1',sa_1)
 
 #printuje listy, iba kontrolna vec
 #print('\n\n',nf_1)
@@ -66,20 +108,41 @@ print(logs)
 fig = plt.figure()
 
 #grafy z jednotlivych listov
-graf1 = fig.add_subplot(311)
+graf1 = fig.add_subplot(611)
 
 plt.scatter(nf_1,sa_1,s=0.5)
 plt.title('qoqot')
 
-graf2 = fig.add_subplot(312)
+graf2 = fig.add_subplot(612)
 
 plt.scatter(nf_2, eap_2,s=0.5)
 plt.title('vaginqa')
 
-graf3 = fig.add_subplot(313)
+graf3 = fig.add_subplot(613)
 
 plt.scatter(eap_3,sa_3,s=0.5)
 plt.title('analiq')
+
+graf4 = fig.add_subplot(614)
+plt.scatter(logsa_1, lognf_1, s=0.9)
+plt.title('WK')
+plt.xlabel('Log Sa')
+plt.ylabel('Log 2Nf')
+plt.plot(xs, krivkaregresie_WK,"r-")
+
+graf5 = fig.add_subplot(615)
+plt.scatter(logeap_2, lognf_2, s=0.9)
+plt.title('MCK')
+plt.xlabel('Log Eap')
+plt.ylabel('Log 2Nf')
+plt.plot(xs, krivkaregresie_MCK,"r-")
+
+graf6 = fig.add_subplot(616)
+plt.scatter(logsa_3, logeap_3, s=0.9)
+plt.title('CDK')
+plt.xlabel('Log Sa')
+plt.ylabel('Log Eap')
+plt.plot(xs, krivkaregresie_CDK,"r-")
 
 plt.subplots_adjust(hspace=0.8)
 plt.show()
