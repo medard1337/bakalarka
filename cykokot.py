@@ -10,6 +10,7 @@ import collections
 import sys, traceback
 import time
 from statistics import mean
+import math
 
 filename = input('Enter filename ')
 rawfile = open(filename, 'r')
@@ -19,7 +20,7 @@ rawfile.readline()
 final_list_WK = []
 final_list_MCK = []
 final_list_CDK = []
-
+analnik=[]
 
 def tofloat(string):
 	if (string.strip()):
@@ -33,6 +34,7 @@ for l in rawfile:
 		split_l = l.split(';')
 		Nf1 = tofloat(split_l[0])
 		Sa1 = tofloat(split_l[1])
+		analnik.append([Nf1])
 		if (Nf1 > 0 and Sa1 > 0):
 			final_list_WK.append([Nf1, Sa1])
 		Nf2 = tofloat(split_l[2])
@@ -51,12 +53,14 @@ nf_2, eap_2 = mcklist.T
 cdklist = np.array(final_list_CDK)
 eap_3, sa_3 = cdklist.T
 
+logs = [math.log(x) for x in nf_1] 
+print(logs)
 
 #printuje listy, iba kontrolna vec
-print('\n\n',nf_1)
-print('\n\n\ngraf wk',final_list_WK)
-print('\n\ngraf mck',final_list_MCK)
-print('\n\ngraf cdk',final_list_CDK)
+#print('\n\n',nf_1)
+#print('\n\n\ngraf wk',final_list_WK)
+#print('\n\ngraf mck',final_list_MCK)
+#print('\n\ngraf cdk',final_list_CDK)
 
 #deklaruje prazdny figure
 fig = plt.figure()
