@@ -11,6 +11,10 @@ import sys, traceback
 import time
 from statistics import mean
 import math
+import statsmodels.api as sm
+from statsmodels.sandbox.regression.predstd import wls_prediction_std
+from statsmodels.stats.outliers_influence import summary_table
+
 
 filename = input('Enter filename ')
 rawfile = open(filename, 'r')
@@ -108,9 +112,9 @@ b_CDK,sigmaf_CDK = new_koeficient_b_Sigmaf(k3,1/k3)
 #vytvorena nova krivka pre povodne grafy tzn Sigma a voci 2Nf
 #novakrivkaregresie_CDK = [sigmaf_CDK*(nf_1)**b_CDK]
 
-print('(WK) Koeficient b =', b_WK,'Koeficient Sigmaf = ',sigmaf_WK)
-print('(MCK) Koeficient b =', b_MCK,'Koeficient Sigmaf =',sigmaf_MCK)
-print('(CDK) Koeficient b =', b_CDK,'Koeficient Sigmaf =',sigmaf_CDK)
+print('\n(WK) Koeficient b =', b_WK,'Koeficient Sigmaf = ',sigmaf_WK)
+print('\n(MCK) Koeficient b =', b_MCK,'Koeficient Sigmaf =',sigmaf_MCK)
+print('\n(CDK) Koeficient b =', b_CDK,'Koeficient Sigmaf =',sigmaf_CDK)
 
 #linearna regresia pre reverznute osi tzn. na osi x-ovej je 2Nf aj v pripade krivky WK aj MCK , na krivke WK je na osi y Sigma a
 #a na krivke MCK je na osi y Epsilon ab
@@ -131,31 +135,103 @@ def sigma_a(sigmaf,Nf,b):
 sigmaaWK = sigma_a(sigmaf_WK,nf_1,b_WK)
 sigmaaMCK = sigma_a(sigmaf_MCK,nf_2,b_MCK)
 
+
+#konfidencny interval
+#def mean_confidence_interval(data, confidence=0.95):
+#	a = 1.0*np.array(data)
+#	n = len(a)
+#	m, se =np.mean(a), scipy.stats.sem(a)
+#	h = se * scipy.stats.t._ppf((1+confidence)/2.,n-1)
+#	return m, m-h, m+h
+
+#print('\nKonfidencny interval WK: ',mean_confidence_interval(krivkaregresie_WK))
+#print('\nKonfidencny interval MCK: ',mean_confidence_interval(krivkaregresie_MCK))
+#print('\nKonfidencny interval CDK: ',mean_confidence_interval(krivkaregresie_CDK))
+
+#predikcny interval
+#1
+x1 = np.array(lognf_1)
+y1 = np.array(logsa_1)
+X1 = sm.add_constant(x1)
+#2
+x2 = np.array(lognf_2)
+y2 = np.array(logeap_2)
+X2 = sm.add_constant(x2)
+#3
+x3 = np.array(logsa_3)
+y3 = np.array(logeap_3)
+X3 = sm.add_constant(x3)
+
+#Fit the model
+def re(y, X):
+	re = sm.OLS(y, X).fit()
+	return re
+re1=re(y1,X1)
+re2=re(y2,X2)
+re3=re(y3,X3)
+#1
+#re1 = sm.OLS(y1, X1).fit()
+#st, data, ss2 = summary_table(re1, alpha=0.05)
+#print(data)
+#2
+#re2 = sm.OLS(y2, X2).fit()
+#3
+#re3 = sm.OLS(y3, X3).fit()
+
+def d(re):
+	st, data, ss2 = summary_table(re, alpha=0.05)
+	return st, data, ss2
+#st, data, ss2 = summary_table(re, alpha=0.01)
+d(re1)
+print(data)
+
+da2=d1(re2)
+da3=d1(re2)
+#Get the confidence intervals
+fittedvalues = data[:,2]
+predict_mean_se  = data[:,3]
+predict_mean_ci_low, predict_mean_ci_upp = data[:,4:6].T
+predict_ci_low, predict_ci_upp = data[:,6:8].T
+
+
+
+
 #deklaruje prazdny figure
 fig = plt.figure()
 
-graf4 = fig.add_subplot(511)
+graf4 = fig.add_subplot(811)
 plt.scatter(lognf_1, logsa_1, s=0.9)
 plt.title('WK')
 plt.ylabel(r'Log $\sigma_a$')
 plt.xlabel(r'Log 2N$\_f$')
 plt.plot(xs1r,krivkaregresie_WK,"r-")
 
-graf5 = fig.add_subplot(513)
+graf5 = fig.add_subplot(813)
 plt.scatter(lognf_2, logeap_2, s=0.9)
 plt.title('MCK')
 plt.ylabel(r'Log $\epsilon_ap$')
 plt.xlabel('Log 2Nf')
 plt.plot(xs2r,krivkaregresie_MCK,"r-")
 
-graf6 = fig.add_subplot(515)
+graf6 = fig.add_subplot(815)
 plt.scatter(logsa_3, logeap_3, s=0.9)
 plt.title('CDK')
 plt.xlabel(r'Log $\sigma_a$')
 plt.ylabel(r'Log $\epsilon_ap$')
 plt.plot(xs3, krivkaregresie_CDK,"r-")
 
-plt.subplots_adjust(hspace=0.05)
+##############################################
+#Plot confidence intervals and data points
+graf6 = fig.add_subplot(816)
+plt.plot(x1, y1, 'o')
+plt.plot(x1, fittedvalues, '-', lw=1)
+plt.plot(x1, predict_ci_low, 'r--', lw=1)
+plt.plot(x1, predict_ci_upp, 'r--', lw=1)
+plt.plot(x1, predict_mean_ci_low, 'g--', lw=1)
+plt.plot(x1, predict_mean_ci_upp, 'g--', lw=1)
+
+
+plt.subplots_adjust(hspace=0.01)
 plt.show()
 
 
