@@ -180,18 +180,23 @@ re3=re(y3,X3)
 
 def d(re):
 	st, data, ss2 = summary_table(re, alpha=0.05)
-	return st, data, ss2
+	return st,data,ss2
 #st, data, ss2 = summary_table(re, alpha=0.01)
-d(re1)
-print(data)
+da1=d(re1)[1]
+da2=d(re2)[1]
+da3=d(re3)[1]
 
-da2=d1(re2)
-da3=d1(re2)
 #Get the confidence intervals
-fittedvalues = data[:,2]
-predict_mean_se  = data[:,3]
-predict_mean_ci_low, predict_mean_ci_upp = data[:,4:6].T
-predict_ci_low, predict_ci_upp = data[:,6:8].T
+def conf_interval(da):
+	fittedvalues = da[:,2]
+	predict_mean_se  = da[:,3]
+	predict_mean_ci_low, predict_mean_ci_upp = da[:,4:6].T
+	predict_ci_low, predict_ci_upp = da[:,6:8].T
+	
+	
+p1=conf_interval(da1)[0]
+conf_interval(da2)
+conf_interval(da3)
 
 
 
