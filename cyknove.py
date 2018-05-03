@@ -205,27 +205,6 @@ c3=conf_interval(da3)
 #deklaruje prazdny figure
 fig = plt.figure()
 
-graf4 = fig.add_subplot(811)
-plt.scatter(lognf_1, logsa_1, s=0.9)
-plt.title('WK')
-plt.ylabel(r'Log $\sigma_a$')
-plt.xlabel(r'Log 2N$\_f$')
-plt.plot(xs1r,krivkaregresie_WK,"r-")
-
-graf5 = fig.add_subplot(813)
-plt.scatter(lognf_2, logeap_2, s=0.9)
-plt.title('MCK')
-plt.ylabel(r'Log $\epsilon_ap$')
-plt.xlabel('Log 2Nf')
-plt.plot(xs2r,krivkaregresie_MCK,"r-")
-
-graf6 = fig.add_subplot(815)
-plt.scatter(logsa_3, logeap_3, s=0.9)
-plt.title('CDK')
-plt.xlabel(r'Log $\sigma_a$')
-plt.ylabel(r'Log $\epsilon_ap$')
-plt.plot(xs3, krivkaregresie_CDK,"r-")
-
 ##############################################
 #Plot confidence intervals and data points
 graf6 = fig.add_subplot(816)
