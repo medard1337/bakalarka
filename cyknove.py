@@ -192,11 +192,12 @@ def conf_interval(da):
 	predict_mean_se  = da[:,3]
 	predict_mean_ci_low, predict_mean_ci_upp = da[:,4:6].T
 	predict_ci_low, predict_ci_upp = da[:,6:8].T
+	return fittedvalues, predict_mean_se,predict_mean_ci_low,predict_mean_ci_upp,predict_ci_low,predict_ci_upp
 	
 	
-p1=conf_interval(da1)[0]
-conf_interval(da2)
-conf_interval(da3)
+c1=conf_interval(da1)
+c2=conf_interval(da2)
+c3=conf_interval(da3)
 
 
 
@@ -229,11 +230,11 @@ plt.plot(xs3, krivkaregresie_CDK,"r-")
 #Plot confidence intervals and data points
 graf6 = fig.add_subplot(816)
 plt.plot(x1, y1, 'o')
-plt.plot(x1, fittedvalues, '-', lw=1)
-plt.plot(x1, predict_ci_low, 'r--', lw=1)
-plt.plot(x1, predict_ci_upp, 'r--', lw=1)
-plt.plot(x1, predict_mean_ci_low, 'g--', lw=1)
-plt.plot(x1, predict_mean_ci_upp, 'g--', lw=1)
+plt.plot(x1, c1[0], '-', lw=1)
+plt.plot(x1, c1[4], 'r--', lw=1)
+plt.plot(x1, c1[5], 'r--', lw=1)
+plt.plot(x1, c1[2], 'g--', lw=1)
+plt.plot(x1, c1[3], 'g--', lw=1)
 
 
 plt.subplots_adjust(hspace=0.01)
