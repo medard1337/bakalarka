@@ -148,19 +148,36 @@ sigmaaMCK = sigma_a(sigmaf_MCK,nf_2,b_MCK)
 #print('\nKonfidencny interval MCK: ',mean_confidence_interval(krivkaregresie_MCK))
 #print('\nKonfidencny interval CDK: ',mean_confidence_interval(krivkaregresie_CDK))
 
+
+############################################################################
 #predikcny interval
 #1
-x1 = np.array(lognf_1)
-y1 = np.array(logsa_1)
+x1_0 = np.array(lognf_1)
+y1_0 = np.array(logsa_1)
+combo1 = np.vstack((x1_0,y1_0)).T
+sort1=np.array(sorted(combo1, key=lambda l: l[1]))
+x1, y1 = sort1.T
 X1 = sm.add_constant(x1)
 #2
-x2 = np.array(lognf_2)
-y2 = np.array(logeap_2)
+x2_0 = np.array(lognf_2)
+y2_0 = np.array(logeap_2)
+combo2 = np.vstack((x2_0,y2_0)).T
+sort2=np.array(sorted(combo2, key=lambda l: l[1]))
+x2, y2 = sort2.T
 X2 = sm.add_constant(x2)
 #3
-x3 = np.array(logsa_3)
-y3 = np.array(logeap_3)
+x3_0 = np.array(logsa_3)
+y3_0 = np.array(logeap_3)
+combo3 = np.vstack((x3_0,y3_0)).T
+sort3=np.array(sorted(combo3, key=lambda l: l[1]))
+x3, y3 = sort3.T
 X3 = sm.add_constant(x3)
+
+
+
+
+
+
 
 #Fit the model
 def re(y, X):
@@ -169,22 +186,27 @@ def re(y, X):
 re1=re(y1,X1)
 re2=re(y2,X2)
 re3=re(y3,X3)
-#1
-#re1 = sm.OLS(y1, X1).fit()
-#st, data, ss2 = summary_table(re1, alpha=0.05)
-#print(data)
-#2
-#re2 = sm.OLS(y2, X2).fit()
-#3
-#re3 = sm.OLS(y3, X3).fit()
 
-def d(re):
-	st, data, ss2 = summary_table(re, alpha=0.05)
+def d(re,alpha):
+	st, data, ss2 = summary_table(re, alpha)
 	return st,data,ss2
-#st, data, ss2 = summary_table(re, alpha=0.01)
-da1=d(re1)[1]
-da2=d(re2)[1]
-da3=d(re3)[1]
+
+
+#99%
+da1_99=d(re1,0.01)[1]
+da2_99=d(re2,0.01)[1]
+da3_99=d(re3,0.01)[1]
+
+
+#95% intervaly
+da1_95=d(re1,0.05)[1]
+da2_95=d(re2,0.05)[1]
+da3_95=d(re3,0.05)[1]
+
+#50%
+da1_50=d(re1,0.5)[1]
+da2_50=d(re2,0.5)[1]
+da3_50=d(re3,0.5)[1]
 
 #Get the confidence intervals
 def conf_interval(da):
@@ -193,30 +215,89 @@ def conf_interval(da):
 	predict_mean_ci_low, predict_mean_ci_upp = da[:,4:6].T
 	predict_ci_low, predict_ci_upp = da[:,6:8].T
 	return fittedvalues, predict_mean_se,predict_mean_ci_low,predict_mean_ci_upp,predict_ci_low,predict_ci_upp
-	
-	
-c1=conf_interval(da1)
-c2=conf_interval(da2)
-c3=conf_interval(da3)
 
 
+#conf intervaly
+#99%
+c1_99=conf_interval(da1_99)
+c2_99=conf_interval(da2_99)
+c3_99=conf_interval(da3_99)
+
+#95%
+c1_95=conf_interval(da1_95)
+c2_95=conf_interval(da2_95)
+c3_95=conf_interval(da3_95)
+
+#50%
+c1_50=conf_interval(da1_50)
+c2_50=conf_interval(da2_50)
+c3_50=conf_interval(da3_50)
+######################################################################################################################################
 
 
 #deklaruje prazdny figure
 fig = plt.figure()
 
-##############################################
 #Plot confidence intervals and data points
-graf6 = fig.add_subplot(816)
-plt.plot(x1, y1, 'o')
-plt.plot(x1, c1[0], '-', lw=1)
-plt.plot(x1, c1[4], 'r--', lw=1)
-plt.plot(x1, c1[5], 'r--', lw=1)
-plt.plot(x1, c1[2], 'g--', lw=1)
-plt.plot(x1, c1[3], 'g--', lw=1)
+
+def graf(x,y,c):
+	plt.plot(x, y, '.',label='Vstupné dáta')
+	plt.plot(x, c[0], '-', lw=1,label='Regresná krivka')
+	plt.plot(x, c[4], 'r--', lw=1, label='Predikčný interval')
+	plt.plot(x, c[5], 'r--', lw=1, label='Predikčný interval')
+	plt.plot(x, c[2], 'g--', lw=1, label='Konfidenčný interval')
+	plt.plot(x, c[3], 'g--', lw=1, label='Konfidenčný interval')
 
 
-plt.subplots_adjust(hspace=0.01)
+#WK 99%
+graf1 = fig.add_subplot(331)
+plt.title('WK 99%')
+graf(x1,y1,c1_99)
+
+#MCK99%
+graf2 = fig.add_subplot(332)
+plt.title('MCK 99%')
+graf(x2,y2,c2_99)
+
+#CDK99%
+graf3 = fig.add_subplot(333)
+plt.title('CDK 99%')
+graf(x3,y3,c3_99)
+
+#WK 95%
+graf4 = fig.add_subplot(334)
+plt.title('WK 95%')
+graf(x1,y1,c1_95)
+
+#MCK95%
+graf5 = fig.add_subplot(335)
+plt.title('MCK 95%')
+graf(x2,y2,c2_95)
+
+#CDK 95%
+graf6 = fig.add_subplot(336)
+plt.title('CDK 95%')
+graf(x3,y3,c3_95)
+
+#WK 50%
+graf7 = fig.add_subplot(337)
+plt.title('WK 50%')
+graf(x1,y1,c1_50)
+
+#MCK50%
+graf8 = fig.add_subplot(338)
+plt.title('MCK 50%')
+graf(x2,y2,c2_50)
+
+#CDK50%
+graf9 = fig.add_subplot(339)
+plt.title('CDK 50%')
+graf(x3,y3,c3_50)
+
+
+
+plt.legend(bbox_to_anchor=(1,1),loc=2, borderaxespad=0.)
+plt.subplots_adjust(hspace=0.8)
 plt.show()
 
 
